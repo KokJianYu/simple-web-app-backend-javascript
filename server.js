@@ -7,7 +7,10 @@ var bodyParser = require('body-parser')
 const PORT = 8080;
 const HOST = '0.0.0.0';
 
-var userArray = [];
+//Idea: Message in the cloud
+// Post their message online, wait till a random guy pulls it.
+
+var messageArray = [];
 
 // App
 const app = express();
@@ -17,57 +20,57 @@ app.get('/', (req, res) => {
   res.send('Hello World');
 });
 
-app.get('/random-user', (req, res) => {
-    // Get Random User
+app.get('/random-message', (req, res) => {
+    // Get Random message
     
-    var randomUserIndex = Math.floor(Math.random()*userArray.length);
-    res.status(200).json({"index": randomUserIndex, "user": userArray[randomUserIndex]});
+    var randomIndex = Math.floor(Math.random()*messageArray.length);
+    res.status(200).json({"index": randomIndex, "message": messageArray[randomIndex]});
 });
 
-app.get('/user', (req, res) => {
-    // Get all user 
-    res.status(200).json({"users": userArray});
+app.get('/message', (req, res) => {
+    // Get all messages 
+    res.status(200).json({"messages": messageArray});
 })
 
-app.post('/user', (req, res) => {
-    // Add User
-    if (req.body.name == null)
+app.post('/message', (req, res) => {
+    // Add message
+    if (req.body.message == null)
     {
-        res.status(400).json({"message": "variable name not included in json "});
+        res.status(400).json({"info": "variable message not included in json "});
         return;
     }
-    userArray.push(req.body.name);
-    res.status(200).json({"message": `user ${req.body.name} added`});
+    messageArray.push(req.body.message);
+    res.status(200).json({"info": `message ${req.body.message} added`});
     
 });
 
-app.put('/user/:index', (req, res) => {
-    // Edit User
+app.put('/message/:index', (req, res) => {
+    // Edit posted message if you have index.
     var index = req.params.index;
-    if (req.body.name == null)
+    if (req.body.message == null)
     {
-        res.status(400).json({"message": "variable name not included in json "});
+        res.status(400).json({"info": "variable message not included in json "});
         return;
     }
-    if (index < 0 || index > (userArray.length-1)) {
-        res.status(400).json({"message": "invalid index provided"});
+    if (index < 0 || index > (messageArray.length-1)) {
+        res.status(400).json({"info": "invalid index provided"});
         return;
     }
-    var prevName = userArray[index];
-    userArray[index] = req.body.name;
-    res.status(200).json({"message": `user ${index} name is changed from ${prevName} to ${req.body.name}`});
+    var prevMessage = messageArray[index];
+    messageArray[index] = req.body.message;
+    res.status(200).json({"info": `message ${index} is changed from ${prevMessage} to ${req.body.message}`});
 });
 
-app.delete('/user/:index', (req, res) => {
-    // Delete User
+app.delete('/message/:index', (req, res) => {
+    // Delete message if you have index
     var index = req.params.index;
-    if (index < 0 || index > (userArray.length-1)) {
-        res.status(400).json({"message": "invalid index provided"});
+    if (index < 0 || index > (messageArray.length-1)) {
+        res.status(400).json({"info": "invalid index provided"});
         return;
     }
-    var prevName = userArray[index];
-    userArray.splice(index,1);
-    res.status(200).json({"message": `user ${index}, ${prevName} has been removed`});
+    var prevMessage = messageArray[index];
+    messageArray.splice(index,1);
+    res.status(200).json({"info": `message ${index}, ${prevMessage} has been removed`});
 });
 
 app.listen(PORT, HOST);
