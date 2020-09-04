@@ -1,35 +1,73 @@
 'use strict';
 
 const express = require('express');
+var bodyParser = require('body-parser')
 
 // Constants
 const PORT = 8080;
 const HOST = '0.0.0.0';
 
+var userArray = [];
+
 // App
 const app = express();
+app.use(bodyParser.json());
+
 app.get('/', (req, res) => {
   res.send('Hello World');
 });
 
-app.get('/user/random', (req, res) => {
+app.get('/random-user', (req, res) => {
     // Get Random User
-    res.send('Get');
+    
+    var randomUserIndex = Math.floor(Math.random()*userArray.length);
+    res.status(200).json({"index": randomUserIndex, "user": userArray[randomUserIndex]});
 });
+
+app.get('/user', (req, res) => {
+    // Get all user 
+    res.status(200).json({"users": userArray});
+})
 
 app.post('/user', (req, res) => {
     // Add User
-    res.send('Post');
+    if (req.body.name == null)
+    {
+        res.status(400).json({"message": "variable name not included in json "});
+        return;
+    }
+    userArray.push(req.body.name);
+    res.status(200).json({"message": `user ${req.body.name} added`});
+    
 });
 
-app.put('/user', (req, res) => {
-    // Update User
-    res.send('Put');
+app.put('/user/:index', (req, res) => {
+    // Edit User
+    var index = req.params.index;
+    if (req.body.name == null)
+    {
+        res.status(400).json({"message": "variable name not included in json "});
+        return;
+    }
+    if (index < 0 || index > (userArray.length-1)) {
+        res.status(400).json({"message": "invalid index provided"});
+        return;
+    }
+    var prevName = userArray[index];
+    userArray[index] = req.body.name;
+    res.status(200).json({"message": `user ${index} name is changed from ${prevName} to ${req.body.name}`});
 });
 
-app.delete('/user', (req, res) => {
+app.delete('/user/:index', (req, res) => {
     // Delete User
-    res.send('Delete');
+    var index = req.params.index;
+    if (index < 0 || index > (userArray.length-1)) {
+        res.status(400).json({"message": "invalid index provided"});
+        return;
+    }
+    var prevName = userArray[index];
+    userArray.splice(index,1);
+    res.status(200).json({"message": `user ${index}, ${prevName} has been removed`});
 });
 
 app.listen(PORT, HOST);
