@@ -7,10 +7,9 @@ var bodyParser = require('body-parser')
 const PORT = 8080;
 const HOST = '0.0.0.0';
 
-//Idea: Message in the cloud
-// Post their message online, wait till a random guy pulls it.
+//Idea: Spanish Flash cards
 
-var messageArray = [];
+var flashCardArray = [];
 
 // App
 const app = express();
@@ -20,57 +19,60 @@ app.get('/', (req, res) => {
   res.send('Hello World');
 });
 
-app.get('/random-message', (req, res) => {
-    // Get Random message
+app.get('/random-flashCard', (req, res) => {
+    // Get Random flashCard
     
-    var randomIndex = Math.floor(Math.random()*messageArray.length);
-    res.status(200).json({"index": randomIndex, "message": messageArray[randomIndex]});
+    var randomIndex = Math.floor(Math.random()*flashCardArray.length);
+    var msg = flashCardArray.splice(randomIndex, 1);
+    res.status(200).json({"index": randomIndex, "flashCard": msg});
 });
 
-app.get('/message', (req, res) => {
-    // Get all messages 
-    res.status(200).json({"messages": messageArray});
+app.get('/flashCard', (req, res) => {
+    // Get all flashCards 
+    res.status(200).json({"flashcards": flashCardArray});
 })
 
-app.post('/message', (req, res) => {
-    // Add message
-    if (req.body.message == null)
+app.post('/flashCard', (req, res) => {
+    // Add flashCard
+    if (req.body.spanish == null && req.body.english == null)
     {
-        res.status(400).json({"info": "variable message not included in json "});
+        res.status(400).json({"info": "variable `spanish` or `english` not included in json "});
         return;
     }
-    messageArray.push(req.body.message);
-    res.status(200).json({"info": `message ${req.body.message} added`});
+    var flashCard = [req.body.spanish, req.body.english];
+    flashCardArray.push(flashCard);
+    res.status(200).json({"info": `flashCard ${flashCard} added`});
     
 });
 
-app.put('/message/:index', (req, res) => {
-    // Edit posted message if you have index.
+app.put('/flashCard/:index', (req, res) => {
+    // Edit posted flashCard if you have index.
     var index = req.params.index;
-    if (req.body.message == null)
+    if (req.body.spanish == null && req.body.english == null)
     {
-        res.status(400).json({"info": "variable message not included in json "});
+        res.status(400).json({"info": "variable `spanish` or `english` not included in json "});
         return;
     }
-    if (index < 0 || index > (messageArray.length-1)) {
+    if (index < 0 || index > (flashCardArray.length-1)) {
         res.status(400).json({"info": "invalid index provided"});
         return;
     }
-    var prevMessage = messageArray[index];
-    messageArray[index] = req.body.message;
-    res.status(200).json({"info": `message ${index} is changed from ${prevMessage} to ${req.body.message}`});
+    var prevFlashCard = flashCardArray[index];
+    flashCardArray[index][0] = req.body.spanish;
+    flashCardArray[index][1] = req.body.english;
+    res.status(200).json({"info": `flashCard ${index} is changed to ${flashCardArray[index]}`});
 });
 
-app.delete('/message/:index', (req, res) => {
-    // Delete message if you have index
+app.delete('/flashCard/:index', (req, res) => {
+    // Delete flashCard if you have index
     var index = req.params.index;
-    if (index < 0 || index > (messageArray.length-1)) {
+    if (index < 0 || index > (flashCardArray.length-1)) {
         res.status(400).json({"info": "invalid index provided"});
         return;
     }
-    var prevMessage = messageArray[index];
-    messageArray.splice(index,1);
-    res.status(200).json({"info": `message ${index}, ${prevMessage} has been removed`});
+    var prevFlashCard = flashCardArray[index];
+    flashCardArray.splice(index,1);
+    res.status(200).json({"info": `flashCard ${index} has been removed`});
 });
 
 app.listen(PORT, HOST);
