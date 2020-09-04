@@ -1,0 +1,22 @@
+{
+  "name": "simple-web-app-javascript",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KokJianYu/simple-web-app-javascript.git"
+  },
+  "author": "Kok Jian Yu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KokJianYu/simple-web-app-javascript/issues"
+  },
+  "homepage": "https://github.com/KokJianYu/simple-web-app-javascript#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
