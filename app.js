@@ -16,7 +16,10 @@ var flashCardArray = [];
 // App
 const app = express();
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({
+    origin: "*",
+    allowedHeaders: "access-control-allow-origin"
+}));
 
 app.get('/', (req, res) => {
   res.send('Hello World');
