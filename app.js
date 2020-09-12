@@ -2,13 +2,13 @@
 
 const express = require('express');
 var bodyParser = require('body-parser')
-
+var cors = require('cors');
 // Constants
 const PORT = 8080;
 const HOST = '0.0.0.0';
 const LOCAL = true;
 
-//Idea: Spanish Flash cards
+//Idea: Flash cards
 
 
 var flashCardArray = [];
@@ -16,6 +16,7 @@ var flashCardArray = [];
 // App
 const app = express();
 app.use(bodyParser.json());
+app.use(cors());
 
 app.get('/', (req, res) => {
   res.send('Hello World');
@@ -36,12 +37,12 @@ app.get('/flashCard', (req, res) => {
 
 app.post('/flashCard', (req, res) => {
     // Add flashCard
-    if (req.body.spanish == null && req.body.english == null)
+    if (req.body.front == null && req.body.back == null)
     {
-        res.status(400).json({"info": "variable `spanish` or `english` not included in json "});
+        res.status(400).json({"info": "variable `front` or `back` not included in json "});
         return;
     }
-    var flashCard = [req.body.spanish, req.body.english];
+    var flashCard = [req.body.front, req.body.back];
     flashCardArray.push(flashCard);
     res.status(200).json({"info": `flashCard ${flashCard} added`});
     
@@ -50,9 +51,9 @@ app.post('/flashCard', (req, res) => {
 app.put('/flashCard/:index', (req, res) => {
     // Edit posted flashCard if you have index.
     var index = req.params.index;
-    if (req.body.spanish == null && req.body.english == null)
+    if (req.body.front == null && req.body.back == null)
     {
-        res.status(400).json({"info": "variable `spanish` or `english` not included in json "});
+        res.status(400).json({"info": "variable `front` or `back` not included in json "});
         return;
     }
     if (index < 0 || index > (flashCardArray.length-1)) {
@@ -60,8 +61,8 @@ app.put('/flashCard/:index', (req, res) => {
         return;
     }
     var prevFlashCard = flashCardArray[index];
-    flashCardArray[index][0] = req.body.spanish;
-    flashCardArray[index][1] = req.body.english;
+    flashCardArray[index][0] = req.body.front;
+    flashCardArray[index][1] = req.body.back;
     res.status(200).json({"info": `flashCard ${index} is changed to ${flashCardArray[index]}`});
 });
 
