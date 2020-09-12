@@ -23,7 +23,7 @@ describe('CRUD Test', function() {
             chai.request(backend_api)
             .post("/flashCard")
             .set("Content-Type", "application/json")
-            .send({"english":"professor","spanish":"profesora"})
+            .send({"back":"professor","front":"profesora"})
             .end((err, res) => {
                 expect(res).to.have.status(200);
                 expect(res.body.info).to.equal("flashCard profesora,professor added");
@@ -47,7 +47,7 @@ describe('CRUD Test', function() {
             chai.request(backend_api)
             .put("/flashCard/0")
             .set("Content-Type", "application/json")
-            .send({"english":"chair","spanish":"silla"})
+            .send({"back":"chair","front":"silla"})
             .end((err, res) => {
                 expect(res).to.have.status(200);
                 expect(res.body.info).to.equal("flashCard 0 is changed to silla,chair");
