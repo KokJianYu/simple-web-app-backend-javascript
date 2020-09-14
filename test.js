@@ -1,6 +1,6 @@
 var chai = require('chai');
 var chaiHttp = require('chai-http');
-var backend_api = require("./app.js");
+var backend_api = "http://localhost:8080";
 
 const {expect} = chai;
 chai.use(chaiHttp);
@@ -18,15 +18,17 @@ describe('CRUD Test', function() {
         });
     });
 
+    var id;
     describe('Add/Post test', function() {
         it("Should add a flashcard", (done) => {
             chai.request(backend_api)
             .post("/flashCard")
             .set("Content-Type", "application/json")
-            .send({"back":"professor","front":"profesora"})
+            .send({"behind":"professor","front":"profesora"})
             .end((err, res) => {
                 expect(res).to.have.status(200);
                 expect(res.body.info).to.equal("flashCard profesora,professor added");
+                id = res.body.id;
                 done();
             });
         });
@@ -36,7 +38,7 @@ describe('CRUD Test', function() {
             .get("/flashCard")
             .end((err, res) => {
                 expect(res).to.have.status(200);
-                expect(res.body.flashcards).to.deep.include(["profesora","professor"]);
+                expect(res.body.flashcards).to.deep.include([id,"profesora","professor"]);
                 done();
             });
         });
@@ -45,12 +47,12 @@ describe('CRUD Test', function() {
     describe('Edit/Put test', function() {
         it("Should edit existing flashcard", (done) => {
             chai.request(backend_api)
-            .put("/flashCard/0")
+            .put("/flashCard")
             .set("Content-Type", "application/json")
-            .send({"back":"chair","front":"silla"})
+            .send({"id": id, "behind":"chair","front":"silla"})
             .end((err, res) => {
                 expect(res).to.have.status(200);
-                expect(res.body.info).to.equal("flashCard 0 is changed to silla,chair");
+                expect(res.body.info).to.equal(`flashCard ${id} modified`);
                 done();
             });
         });
@@ -60,8 +62,8 @@ describe('CRUD Test', function() {
             .get("/flashCard")
             .end((err, res) => {
                 expect(res).to.have.status(200);
-                expect(res.body.flashcards).to.deep.not.include(["profesora","professor"]);
-                expect(res.body.flashcards).to.deep.include(["silla","chair"]);
+                expect(res.body.flashcards).to.deep.not.include([id, "profesora","professor"]);
+                expect(res.body.flashcards).to.deep.include([id, "silla","chair"]);
                 done();
             });
         });
@@ -70,10 +72,12 @@ describe('CRUD Test', function() {
     describe('Delete test', function() {
         it("Should delete existing flashcard", (done) => {
             chai.request(backend_api)
-            .delete("/flashCard/0")        
+            .delete("/flashCard")   
+            .set("Content-Type", "application/json")
+            .send({"id": id})     
             .end((err, res) => {
                 expect(res).to.have.status(200);
-                expect(res.body.info).to.equal("flashCard 0 has been removed");
+                expect(res.body.info).to.equal(`flashCard ${id} has been removed`);
                 done();
             });
         });
@@ -83,7 +87,7 @@ describe('CRUD Test', function() {
             .get("/flashCard")
             .end((err, res) => {
                 expect(res).to.have.status(200);
-                expect(res.body.flashcards).to.deep.not.include(["silla","chair"]);
+                expect(res.body.flashcards).to.deep.not.include([id, "silla","chair"]);
                 done();
             });
         });

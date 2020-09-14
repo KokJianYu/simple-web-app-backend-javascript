@@ -71,11 +71,11 @@ app.post('/flashCard', async (req, res) => {
         res.status(400).json({"info": "variable `front` or `behind` not included in json "});
         return;
     }
-    var flashCard = [req.body.front, req.body.behind];
+    var id = uuid.v4();
     var params = {
         TableName: table,
         Item: {
-            "id": uuid.v4(),
+            "id": id,
             "front": req.body.front,
             "behind": req.body.behind
         }
@@ -92,7 +92,7 @@ app.post('/flashCard', async (req, res) => {
 
     console.log(itemAdded)
     if (itemAdded) {
-        res.status(200).json({"info": `flashCard ${flashCard} added`});
+        res.status(200).json({"info": `flashCard ${req.body.front},${req.body.behind} added`, "id":id});
     } else {
         res.status(500).json({"info": `Unable to add flashcard to db`});
     }
@@ -132,7 +132,7 @@ app.put('/flashCard', async (req, res) => {
     }).promise();
 
     if (itemUpdated) {
-        res.status(200).json({"info": `flashCard ${req.body.id} modified`});
+        res.status(200).json({"info": `flashCard ${req.body.id} modified`, "id":req.body.id});
     } else {
         res.status(500).json({"info": `Unable to update flashcard in DB.`});
     }
@@ -165,7 +165,7 @@ app.delete('/flashCard', async (req, res) => {
         }
     }).promise();
     if (isDeleted) {
-        res.status(200).json({"info": `flashCard ${req.body.id} has been removed`});
+        res.status(200).json({"info": `flashCard ${req.body.id} has been removed`, "id":req.body.id});
     } else {
         res.status(500).json({"info": `Unable to delete flashcard`});
     }

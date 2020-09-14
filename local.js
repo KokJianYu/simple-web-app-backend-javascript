@@ -4,9 +4,9 @@ var AWS = require("aws-sdk");
 const PORT = 8080;
 const HOST = '0.0.0.0';
 
-// AWS.config.update({
-//     endpoint: "http://dynamodb-local:8000"
-// });
+AWS.config.update({
+    endpoint: "http://dynamodb-local:8000"
+});
 
 var dynamodb = new AWS.DynamoDB();
 var docClient = new AWS.DynamoDB.DocumentClient();
