@@ -9,6 +9,7 @@ install:
 script:
     - docker build -t kokjianyu/simple-web-app-backend-javascript .
     - docker-compose up -d
+    - sleep 20
     - npm test
     - docker-compose down
     - serverless config credentials --provider aws --key $AWS_ACCESS_KEY_ID --secret $AWS_SECRET_ACCESS_KEY
