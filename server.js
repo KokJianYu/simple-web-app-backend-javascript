@@ -1,4 +1,5 @@
 var app = require("./app.js");
+var AWS = require("aws-sdk");
 const serverless = require('serverless-http');
 
 var docClient = new AWS.DynamoDB.DocumentClient();
