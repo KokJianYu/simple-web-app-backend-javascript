@@ -1,6 +1,6 @@
 var chai = require("chai");
 var chaiHttp = require("chai-http");
-var backend_api = "http://localhost:80800";
+var backend_api = "http://localhost:8080";
 
 const { expect } = chai;
 chai.use(chaiHttp);
